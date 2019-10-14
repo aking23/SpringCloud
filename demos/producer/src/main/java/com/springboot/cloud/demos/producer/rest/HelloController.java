@@ -15,6 +15,7 @@ public class HelloController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/hello")
     public Result world(@RequestParam String name) {
+        System.out.println("hello ...");
         return Result.success(name + "success");
     }
 }

@@ -46,19 +46,29 @@ spring:
           redis-rate-limiter.replenishRate: 2  #流速 每秒
           redis-rate-limiter.burstCapacity: 10   #令牌桶的容积
           rate-limiter: "#{@defaultRedisRateLimiter}"  #SPEL表达式去的对应的bean
-          key-resolver: "#{@apiKeyResolver}" #SPEL表达式去的对应的bean
+          key-resolver: "#{@apiKeyResolver}"
+      routes:
+      - id: producer
+        uri: lb://producer
+        predicates:
+        - Path=/producer/**
+        filters:
+        - StripPrefix=1 #filters中的规则(StripPrefix)会把url producer 去掉
 
 #网关白名单，无需要签权url
 gate:
   ignore:
     authentication:
-      startWith: /oauth,/open
+      startWith: /hello,/oauth,/open
 
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
+#指定服务采用指定的路由负载算法
+producer.ribbon.NFLoadBalancerRuleClassName: com.springboot.cloud.gateway.ribbonlb.IpRouterLBClientRule
 
 logging:
   level:
